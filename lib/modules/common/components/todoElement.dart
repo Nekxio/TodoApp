@@ -1,48 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sizer/sizer.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class TodoElement extends ConsumerStatefulWidget {
-  const TodoElement({
+import '../../../models/task_controller/taskModel.dart';
+
+class TaskElement extends ConsumerStatefulWidget {
+  const TaskElement({
     Key? key,
-    required this.todoTitle,
-    required this.todoDate,
-    required this.todoDone,
+    required this.task,
+    required this.onDismissed,
   }) : super(key: key);
 
-  final String todoTitle;
-  final DateTime todoDate;
-  final bool todoDone;
+  final Task task;
+  final Function(String) onDismissed;
 
   @override
-  ConsumerState createState() => _TodoElementState();
+  _TaskElementState createState() => _TaskElementState();
 }
 
-class _TodoElementState extends ConsumerState<TodoElement> {
+class _TaskElementState extends ConsumerState<TaskElement> {
+  bool isChecked = false;
+
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: Key(widget.todoTitle),
-      //onDismissed: (direction) {
-      //setState(() {
-      //items.removeAt(index);
-      //});
-
-      //ScaffoldMessenger.of(context)
-      //  .showSnackBar(SnackBar(content: Text('$item dismissed')));
-      //},
+      key: Key(widget.task.taskName),
+      onDismissed: (direction) {
+        widget.onDismissed(widget.task.taskName);
+      },
       direction: DismissDirection.endToStart,
       background: Container(
         color: Colors.red,
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            const Icon(
+            Icon(
               Icons.delete,
               color: Colors.white,
             ),
             SizedBox(
-              width: 4.w,
+              width: 4,
             ),
           ],
         ),
@@ -55,35 +52,44 @@ class _TodoElementState extends ConsumerState<TodoElement> {
             color: Colors.grey,
             width: 1,
           ),
+          color: isChecked ? Colors.green.shade100 : null,
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+          padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Checkbox(
-                value: false,
-                onChanged: (value) {
-                  setState(() {});
-                },
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                activeColor: Colors.green,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(widget.todoTitle.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.bold,
-                      )),
-                  Text(
-                    widget.todoDate.toString(),
+              Expanded(
+                flex: 1,
+                child: Checkbox(
+                  value: isChecked,
+                  onChanged: (value) {
+                    setState(() {
+                      isChecked = value ?? false;
+                    });
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
                   ),
-                ],
+                  activeColor: Colors.green,
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.task.taskName.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: isChecked ? Colors.green : Colors.black,
+                      ),
+                    ),
+                    Text(widget.task.taskTag),
+                  ],
+                ),
               ),
             ],
           ),
