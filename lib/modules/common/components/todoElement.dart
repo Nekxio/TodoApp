@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../models/task_controller/taskModel.dart';
 
-class TaskElement extends StatelessWidget {
+class TaskElement extends ConsumerStatefulWidget {
   const TaskElement({
     Key? key,
     required this.task,
@@ -14,11 +15,18 @@ class TaskElement extends StatelessWidget {
   final Function(String) onDismissed;
 
   @override
+  _TaskElementState createState() => _TaskElementState();
+}
+
+class _TaskElementState extends ConsumerState<TaskElement> {
+  bool isChecked = false;
+
+  @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: Key(task.taskName),
+      key: Key(widget.task.taskName),
       onDismissed: (direction) {
-        onDismissed(task.taskName);
+        widget.onDismissed(widget.task.taskName);
       },
       direction: DismissDirection.endToStart,
       background: Container(
@@ -44,35 +52,44 @@ class TaskElement extends StatelessWidget {
             color: Colors.grey,
             width: 1,
           ),
+          color: isChecked ? Colors.green.shade100 : null,
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Checkbox(
-                value: false,
-                onChanged: (value) {
-                  // TODO: Implement checkbox logic
-                },
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                activeColor: Colors.green,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    task.taskName.toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
+              Expanded(
+                flex: 1,
+                child: Checkbox(
+                  value: isChecked,
+                  onChanged: (value) {
+                    setState(() {
+                      isChecked = value ?? false;
+                    });
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
                   ),
-                  Text(task.taskTag),
-                ],
+                  activeColor: Colors.green,
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.task.taskName.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: isChecked ? Colors.green : Colors.black,
+                      ),
+                    ),
+                    Text(widget.task.taskTag),
+                  ],
+                ),
               ),
             ],
           ),
