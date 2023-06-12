@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:sizer/sizer.dart';
 
 import 'modules/home/views/index.dart';
 
@@ -25,14 +26,17 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(
-      title: 'TodoApp',
-      initialRoute: '/',
-      debugShowCheckedModeBanner: false,
-      theme: theme,
-      themeMode: ThemeMode.light,
-
-      home: const HomeView(),
+    return Sizer(
+      builder: (context, orientation, deviceType) {
+        return MaterialApp(
+          title: 'TodoApp',
+          initialRoute: '/',
+          debugShowCheckedModeBanner: false,
+          theme: theme,
+          themeMode: ThemeMode.light,
+          home: const HomeView(),
+        );
+      },
     );
   }
 }
