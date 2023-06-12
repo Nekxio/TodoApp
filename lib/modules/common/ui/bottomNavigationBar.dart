@@ -34,11 +34,7 @@ class _AppBottomNavigationBarState
           text: 'Accueil',
         ),
         GButton(
-          icon: Icons.heart_broken,
-          text: 'Likes',
-        ),
-        GButton(
-          icon: Icons.loupe,
+          icon: Icons.search,
           text: 'Search',
         ),
         GButton(
